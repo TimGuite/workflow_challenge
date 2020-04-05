@@ -15,6 +15,7 @@ Testing is provided by the [Catch2](https://github.com/catchorg/Catch2/blob/mast
 I have tried to conform to common software engineering 'best practices', and to that end this repository features the following:
 
 - C++20
+- GCC 9.2.1, G++9.2.1
 - [CMake](https://cmake.org/) build script for cross-platform configuration (see 
   [here](#cmakeliststxt) for more info)
 - [Catch2](https://github.com/catchorg/Catch2) unit testing framework
