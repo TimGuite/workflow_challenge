@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/TimGuite/workflow_challenge.svg?branch=master)](https://travis-ci.com/TimGuite/workflow_challenge)
+
 # Workflow Challenge
 
 A small C++ package intended to implement a solution to the challenges outlined [here](CHALLENGE.md).
