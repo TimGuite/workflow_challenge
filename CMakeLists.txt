@@ -49,15 +49,14 @@ else()
     add_compile_options(-Wall -pedantic)
 endif()
 
-add_library(mylib src/MyLibrary.cpp 
-                  src/MyLibrary.hpp
-                  src/Exception.hpp)
+add_library(mylib src/step.cpp 
+                  src/step.hpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
 
 add_executable(mytest tests/TestMain.cpp
-                      tests/TestExample.cpp)
+                      tests/TestStep.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
 add_test(test1 mytest)
