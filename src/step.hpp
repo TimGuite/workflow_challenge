@@ -2,6 +2,9 @@
 #include <string>
 #include <vector>
 
+#ifndef STEP_H_
+#define STEP_H_
+
 namespace step {
 // Step structure
 struct Step {
@@ -14,3 +17,5 @@ struct Step {
 // Return a list of dependencies for the step
 std::vector<std::string> viewDependencies(Step &);
 } // namespace step
+
+#endif
