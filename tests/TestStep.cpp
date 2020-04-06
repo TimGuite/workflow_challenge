@@ -23,4 +23,7 @@ TEST_CASE("simple steps", "[step]") {
   // Depends on a and b
   Step c{"c", "Step c", f, {ref(a), ref(b)}};
   REQUIRE(viewDependencies(c) == vector<string>{"a", "b"});
+  // Only tests direct dependency
+  Step d{"d", "Step d", f, {ref(c)}};
+  REQUIRE(viewDependencies(d) == vector<string>{"c"});
 }
