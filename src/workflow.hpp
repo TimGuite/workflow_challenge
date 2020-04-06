@@ -4,6 +4,9 @@
 
 #include "step.hpp"
 
+#ifndef WORKFLOW_H_
+#define WORKFLOW_H_
+
 namespace workflow {
 
 //  Type alias for workflow
@@ -19,3 +22,5 @@ struct StepDescription {
 Workflow makeWorkflow(std::vector<StepDescription>);
 
 } // namespace workflow
+
+#endif
