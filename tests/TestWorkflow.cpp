@@ -31,7 +31,11 @@ TEST_CASE("simple workflow", "[workflow]") {
     REQUIRE(step::viewDependencies(w2["c"]) == vector<string>{"b"});
   }
   SECTION("Invalid Workflow") {
+    // Steps not added in correct order
     REQUIRE_THROWS(
         makeWorkflow({{"a", "Step a", g, {"b"}}, {"b", "Step b", g, {}}}));
+    // Repeating ids
+    REQUIRE_THROWS(
+        makeWorkflow({{"a", "Step a", g, {}}, {"a", "Step b", g, {}}}));
   }
 }
