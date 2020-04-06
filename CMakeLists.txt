@@ -33,7 +33,7 @@ cmake_minimum_required(VERSION 3.6)
 project(Template)
 
 # ensure C++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -50,7 +50,9 @@ else()
 endif()
 
 add_library(mylib src/step.cpp 
-                  src/step.hpp)
+                  src/step.hpp
+                  src/workflow.cpp
+                  src/workflow.hpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
