@@ -18,7 +18,7 @@ I have tried to conform to common software engineering 'best practices', and to 
 
 - C++20
 - GCC 9.2.1, G++9.2.1
-- [CMake](https://cmake.org/) build script for cross-platform configuration (see 
+- [CMake 3.17.0](https://cmake.org/) build script for cross-platform configuration (see 
   [here](#cmakeliststxt) for more info)
 - [Catch2](https://github.com/catchorg/Catch2) unit testing framework
 - [Travis](https://travis-ci.org/) integration for automated testing on Linux 
@@ -34,7 +34,7 @@ I have tried to conform to common software engineering 'best practices', and to 
 
 # Getting Started
 
-- Install [CMake](https://cmake.org/download/) and a C++ compiler. E.g. for 
+- Install [CMake.17.0](https://cmake.org/download/) and a C++ compiler. E.g. for 
   Ubuntu you can use the command-line and type:
 
 ```bash
@@ -70,17 +70,11 @@ $ ctest --output-on-failure
 generates compilation scripts (e.g. using `Makefiles` in linux, or Visual Studio 
 projects for windows) that you can run to compile your C++ project.
 
-Edit the 
-[CMakeTests.txt](https://github.com/OxfordRSE/template-project-cpp/blob/master/CMakeLists.txt) 
-configuration file to do things like:
-    - setup the overall structure of your project, creating libraries and 
-      executables and specifying the dependencies between these.
-    - setup the flags you wish to pass to the compiler
-    - search for any libraries on the current system, and link/include them in 
-      your project
-    - setup testing using 
-      [ctest](https://cmake.org/cmake/help/latest/module/CTest.html)
-    - setup how to install your project on the current system
+Useful links for installing CMake 3.17.0:
+
+- Install:  https://anglehit.com/how-to-install-the-latest-version-of-cmake-via-command-line/
+- Travis: https://github.com/travis-ci/travis-ci/issues/7437
+- Missing library issue: https://stackoverflow.com/questions/16248775/cmake-not-able-to-find-openssl-library
 
 ### .travis.yml
 

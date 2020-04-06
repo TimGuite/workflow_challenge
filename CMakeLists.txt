@@ -29,11 +29,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.17)
 project(Template)
 
-# ensure C++14
-set(CMAKE_CXX_STANDARD 14)
+# ensure C++20
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -49,15 +49,17 @@ else()
     add_compile_options(-Wall -pedantic)
 endif()
 
-add_library(mylib src/MyLibrary.cpp 
-                  src/MyLibrary.hpp
-                  src/Exception.hpp)
+add_library(mylib src/step.cpp 
+                  src/step.hpp
+                  src/workflow.cpp
+                  src/workflow.hpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
 
 add_executable(mytest tests/TestMain.cpp
-                      tests/TestExample.cpp)
+                      tests/TestStep.cpp
+                      tests/TestWorkflow.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
 add_test(test1 mytest)
