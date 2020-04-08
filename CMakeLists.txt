@@ -59,7 +59,8 @@ enable_testing()
 
 add_executable(mytest tests/TestMain.cpp
                       tests/TestStep.cpp
-                      tests/TestWorkflow.cpp)
+                      tests/TestWorkflow.cpp
+                      tests/TestCursor.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
 add_test(test1 mytest)
