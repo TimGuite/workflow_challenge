@@ -20,14 +20,14 @@ private:
 public:
   workflow::Workflow flow;
 
-  Cursor Cursor(const &Workflow);
+  Cursor(const workflow::Workflow &);
 
   std::vector<std::string> availableSteps();
   std::vector<std::string> completedSteps();
   void completed(std::string);
   void failed(std::string);
-}
+};
 
 } // namespace cursor
 
-#endif CURSOR_H
+#endif

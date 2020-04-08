@@ -52,7 +52,9 @@ endif()
 add_library(mylib src/step.cpp 
                   src/step.hpp
                   src/workflow.cpp
-                  src/workflow.hpp)
+                  src/workflow.hpp
+                  src/cursor.hpp
+                  src/cursor.cpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
