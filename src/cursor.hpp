@@ -11,11 +11,12 @@
 namespace cursor {
 
 // Represents the possible state of the steps
-enum StepState { ready, waiting, fail, complete };
+enum StepState { waiting, ready, fail, complete };
 
 class Cursor {
 private:
   std::map<std::string, StepState> workflowState;
+  void updateState();
 
 public:
   workflow::Workflow flow;

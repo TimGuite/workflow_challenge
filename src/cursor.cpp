@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <exception>
 #include <map>
 #include <string>
@@ -53,6 +54,7 @@ void Cursor::completed(string id) {
     throw "Id to complete was not ready";
   }
   workflowState[id] = complete;
+  updateState();
 }
 
 void Cursor::failed(string id) {
@@ -63,6 +65,23 @@ void Cursor::failed(string id) {
     throw "Id to complete was not ready";
   }
   workflowState[id] = fail;
+}
+
+void Cursor::updateState() {
+  // For all the steps which are waiting, if all their dependencies are
+  // complete, mark them as ready
+  for (auto step_entry : workflowState) {
+    if (step_entry.second == waiting) {
+      auto dependencies = step::viewDependencies(flow.at(step_entry.first));
+      // If all of the dependencies are ready in *this* workflowstate,
+      // then the step is ready
+      if (all_of(dependencies.begin(), dependencies.end(), [this](string id) {
+            return (workflowState.at(id) == complete);
+          })) {
+        workflowState[step_entry.first] = ready;
+      }
+    }
+  }
 }
 
 } // namespace cursor

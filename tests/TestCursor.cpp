@@ -80,11 +80,11 @@ TEST_CASE("simple cursor", "[cursor]") {
     REQUIRE(c3.availableSteps() == vector<string>{"b", "c"});
 
     c3.completed("b");
-    REQUIRE(c3.completedSteps() == vector<string>{"a, b"});
+    REQUIRE(c3.completedSteps() == vector<string>{"a", "b"});
     REQUIRE(c3.availableSteps() == vector<string>{"c"});
 
     c3.completed("c");
-    REQUIRE(c3.completedSteps() == vector<string>{"a, b, c"});
+    REQUIRE(c3.completedSteps() == vector<string>{"a", "b", "c"});
     REQUIRE(c3.availableSteps() == vector<string>{"d"});
 
     c3.completed("d");
