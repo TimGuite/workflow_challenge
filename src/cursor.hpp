@@ -10,7 +10,16 @@
 
 namespace cursor {
 
-// Represents the possible state of the steps
+/*
+Represents the possible state of the steps
+
+Flow through the states should be one way
+A state which is waiting can only become ready
+A state which is ready can either complete or fail
+The flow terminates at complete or fail
+
+This should aid understanding for more complex workflows
+*/
 enum StepState { waiting, ready, fail, complete };
 
 class Cursor {
