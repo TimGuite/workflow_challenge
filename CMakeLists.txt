@@ -52,14 +52,17 @@ endif()
 add_library(mylib src/step.cpp 
                   src/step.hpp
                   src/workflow.cpp
-                  src/workflow.hpp)
+                  src/workflow.hpp
+                  src/cursor.hpp
+                  src/cursor.cpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
 
 add_executable(mytest tests/TestMain.cpp
                       tests/TestStep.cpp
-                      tests/TestWorkflow.cpp)
+                      tests/TestWorkflow.cpp
+                      tests/TestCursor.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
 add_test(test1 mytest)
