@@ -102,7 +102,7 @@ TEST_CASE("simple cursor", "[cursor]") {
 
   SECTION("Exceptions") {
     const Workflow w5 =
-        makeWorkflow({{"a", "Step A", h, {}}, {"b", "Step B", h, {}}});
+        makeWorkflow({{"a", "Step A", h, {}}, {"b", "Step B", h, {"a"}}});
     Cursor c5{w5};
 
     // Cannot complete a step which is not in the workflow
@@ -110,10 +110,17 @@ TEST_CASE("simple cursor", "[cursor]") {
     // Same for failures
     REQUIRE_THROWS(c5.failed("d"));
 
+    // Cannot mark something as completed or failed if it is not ready yet
+    REQUIRE_THROWS(c5.completed("b"));
+    REQUIRE_THROWS(c5.failed("b"));
+
     // Cannot mark the same thing as completed twice
     c5.completed("a");
     REQUIRE_THROWS(c5.completed("a"));
     // Nor can it now fail
     REQUIRE_THROWS(c5.failed("a"));
+
+    // This should not be a problem now as 'a' is complete
+    c5.completed("b");
   }
 }
