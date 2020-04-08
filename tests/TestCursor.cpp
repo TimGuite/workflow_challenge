@@ -35,12 +35,12 @@ TEST_CASE("simple cursor", "[cursor]") {
     Cursor c1{w1};
     // None of the steps have completed yet
     REQUIRE(c1.completedSteps().size() == 0);
-    REQUIRE(c1.availableSteps() == vector<string>{"a"});
+    REQUIRE(c1.readySteps() == vector<string>{"a"});
 
     // Mark task a as having completed
     c1.completed("a");
     REQUIRE(c1.completedSteps() == vector<string>{"a"});
-    REQUIRE(c1.availableSteps().size() == 0);
+    REQUIRE(c1.readySteps().size() == 0);
   }
 
   SECTION("Steps with dependencies") {
@@ -50,19 +50,19 @@ TEST_CASE("simple cursor", "[cursor]") {
     Cursor c2{w2};
 
     REQUIRE(c2.completedSteps().size() == 0);
-    REQUIRE(c2.availableSteps() == vector<string>{"a"});
+    REQUIRE(c2.readySteps() == vector<string>{"a"});
 
     c2.completed("a");
     REQUIRE(c2.completedSteps() == vector<string>{"a"});
-    REQUIRE(c2.availableSteps() == vector<string>{"b"});
+    REQUIRE(c2.readySteps() == vector<string>{"b"});
 
     c2.completed("b");
     REQUIRE(c2.completedSteps() == vector<string>{"a", "b"});
-    REQUIRE(c2.availableSteps() == vector<string>{"c"});
+    REQUIRE(c2.readySteps() == vector<string>{"c"});
 
     c2.completed("c");
     REQUIRE(c2.completedSteps() == vector<string>{"a", "b", "c"});
-    REQUIRE(c2.availableSteps().size() == 0);
+    REQUIRE(c2.readySteps().size() == 0);
   }
 
   SECTION("Parallel Tasks") {
@@ -73,23 +73,23 @@ TEST_CASE("simple cursor", "[cursor]") {
     Cursor c3{w3};
 
     REQUIRE(c3.completedSteps().size() == 0);
-    REQUIRE(c3.availableSteps() == vector<string>{"a"});
+    REQUIRE(c3.readySteps() == vector<string>{"a"});
 
     c3.completed("a");
     REQUIRE(c3.completedSteps() == vector<string>{"a"});
-    REQUIRE(c3.availableSteps() == vector<string>{"b", "c"});
+    REQUIRE(c3.readySteps() == vector<string>{"b", "c"});
 
     c3.completed("b");
     REQUIRE(c3.completedSteps() == vector<string>{"a", "b"});
-    REQUIRE(c3.availableSteps() == vector<string>{"c"});
+    REQUIRE(c3.readySteps() == vector<string>{"c"});
 
     c3.completed("c");
     REQUIRE(c3.completedSteps() == vector<string>{"a", "b", "c"});
-    REQUIRE(c3.availableSteps() == vector<string>{"d"});
+    REQUIRE(c3.readySteps() == vector<string>{"d"});
 
     c3.completed("d");
     REQUIRE(c3.completedSteps() == vector<string>{"a", "b", "c", "d"});
-    REQUIRE(c3.availableSteps().size() == 0);
+    REQUIRE(c3.readySteps().size() == 0);
   }
 
   SECTION("Failed steps") {
@@ -97,7 +97,7 @@ TEST_CASE("simple cursor", "[cursor]") {
     Cursor c4{w4};
 
     c4.failed("a");
-    REQUIRE(c4.availableSteps().size() == 0);
+    REQUIRE(c4.readySteps().size() == 0);
   }
 
   SECTION("Exceptions") {

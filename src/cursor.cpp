@@ -26,7 +26,7 @@ Cursor::Cursor(const workflow::Workflow &flow) : flow(flow) {
   }
 }
 
-vector<string> Cursor::availableSteps() {
+vector<string> Cursor::readySteps() {
   vector<string> available;
   for (auto step_entry : workflowState) {
     if (step_entry.second == ready) {

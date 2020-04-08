@@ -23,7 +23,7 @@ public:
 
   Cursor(const workflow::Workflow &);
 
-  std::vector<std::string> availableSteps();
+  std::vector<std::string> readySteps();
   std::vector<std::string> completedSteps();
   void completed(std::string);
   void failed(std::string);
