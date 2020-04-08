@@ -34,13 +34,13 @@ TEST_CASE("simple cursor", "[cursor]") {
     // Create a cursor from the workflow
     Cursor c1{w1};
     // None of the steps have completed yet
-    c1.completedSteps().size() == 0;
-    c1.availableSteps().size() == vector<string>{"a"};
+    REQUIRE(c1.completedSteps().size() == 0);
+    REQUIRE(c1.availableSteps() == vector<string>{"a"});
 
     // Mark task a as having completed
     c1.completed("a");
-    c1.completedSteps == vector<string>{"a"};
-    c1.availableSteps().size() == 0;
+    REQUIRE(c1.completedSteps() == vector<string>{"a"});
+    REQUIRE(c1.availableSteps().size() == 0);
   }
 
   SECTION("Steps with dependencies") {
@@ -49,20 +49,20 @@ TEST_CASE("simple cursor", "[cursor]") {
                                       {"c", "Step c", h, {"b"}}});
     Cursor c2{w2};
 
-    c2.completedSteps().size() == 0;
-    c2.availableSteps() == vector<string>{"a"};
+    REQUIRE(c2.completedSteps().size() == 0);
+    REQUIRE(c2.availableSteps() == vector<string>{"a"});
 
     c2.completed("a");
-    c2.completedSteps() == vector<string>{"a"};
-    c2.availableSteps() == vector<string>{"b"};
+    REQUIRE(c2.completedSteps() == vector<string>{"a"});
+    REQUIRE(c2.availableSteps() == vector<string>{"b"});
 
     c2.completed("b");
-    c2.completedSteps() == vector<string>{"a", "b"};
-    c2.availableSteps() == vector<string>{"c"};
+    REQUIRE(c2.completedSteps() == vector<string>{"a", "b"});
+    REQUIRE(c2.availableSteps() == vector<string>{"c"});
 
     c2.completed("c");
-    c2.completedSteps() == vector<string>{"a", "b", "c"};
-    c2.availableSteps().size() == 0;
+    REQUIRE(c2.completedSteps() == vector<string>{"a", "b", "c"});
+    REQUIRE(c2.availableSteps().size() == 0);
   }
 
   SECTION("Parallel Tasks") {
@@ -72,24 +72,24 @@ TEST_CASE("simple cursor", "[cursor]") {
                                       {"d", "Heat Sample", h, {"b", "c"}}});
     Cursor c3{w3};
 
-    c3.completedSteps().size() == 0;
-    c3.availableSteps() == vector<string>{"a"};
+    REQUIRE(c3.completedSteps().size() == 0);
+    REQUIRE(c3.availableSteps() == vector<string>{"a"});
 
     c3.completed("a");
-    c3.completedSteps() == vector<string>{"a"};
-    c3.availableSteps() == vector<string>{"b", "c"};
+    REQUIRE(c3.completedSteps() == vector<string>{"a"});
+    REQUIRE(c3.availableSteps() == vector<string>{"b", "c"});
 
     c3.completed("b");
-    c3.completedSteps() == vector<string>{"a, b"};
-    c3.availableSteps() == vector<string>{"c"};
+    REQUIRE(c3.completedSteps() == vector<string>{"a, b"});
+    REQUIRE(c3.availableSteps() == vector<string>{"c"});
 
     c3.completed("c");
-    c3.completedSteps() == vector<string>{"a, b, c"};
-    c3.availableSteps() == vector<string>{"d"};
+    REQUIRE(c3.completedSteps() == vector<string>{"a, b, c"});
+    REQUIRE(c3.availableSteps() == vector<string>{"d"});
 
     c3.completed("d");
-    c3.completedSteps() == vector<string>{"a", "b", "c", "d"};
-    c3.availableSteps().size() == 0;
+    REQUIRE(c3.completedSteps() == vector<string>{"a", "b", "c", "d"});
+    REQUIRE(c3.availableSteps().size() == 0);
   }
 
   SECTION("Failed steps") {
@@ -97,7 +97,7 @@ TEST_CASE("simple cursor", "[cursor]") {
     Cursor c4{w4};
 
     c4.failed("a");
-    c4.availableSteps().size() == 0;
+    REQUIRE(c4.availableSteps().size() == 0);
   }
 
   SECTION("Exceptions") {

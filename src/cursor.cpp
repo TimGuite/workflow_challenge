@@ -25,4 +25,44 @@ Cursor::Cursor(const workflow::Workflow &flow) : flow(flow) {
   }
 }
 
+vector<string> Cursor::availableSteps() {
+  vector<string> available;
+  for (auto step_entry : workflowState) {
+    if (step_entry.second == ready) {
+      available.push_back(step_entry.first);
+    }
+  }
+  return available;
+}
+
+vector<string> Cursor::completedSteps() {
+  vector<string> available;
+  for (auto step_entry : workflowState) {
+    if (step_entry.second == complete) {
+      available.push_back(step_entry.first);
+    }
+  }
+  return available;
+}
+
+void Cursor::completed(string id) {
+  if (workflowState.contains(id) == false) {
+    throw "Id to complete does not match step in the workflow";
+  }
+  if (workflowState.at(id) != ready) {
+    throw "Id to complete was not ready";
+  }
+  workflowState[id] = complete;
+}
+
+void Cursor::failed(string id) {
+  if (workflowState.contains(id) == false) {
+    throw "Id to complete does not match step in the workflow";
+  }
+  if (workflowState.at(id) != ready) {
+    throw "Id to complete was not ready";
+  }
+  workflowState[id] = fail;
+}
+
 } // namespace cursor

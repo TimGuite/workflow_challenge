@@ -11,7 +11,7 @@
 namespace cursor {
 
 // Represents the possible state of the steps
-enum StepState { ready, waiting, failed, completed };
+enum StepState { ready, waiting, fail, complete };
 
 class Cursor {
 private:
