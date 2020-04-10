@@ -16,6 +16,7 @@ struct StepDescription {
   std::string id;
   std::string description;
   std::function<void(void)> task;
+  step::FlowControl type;
   std::vector<std::string> dependency_ids;
 };
 

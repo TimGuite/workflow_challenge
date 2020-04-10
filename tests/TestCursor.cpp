@@ -19,6 +19,7 @@ It should be able to mark a step as having failed.
 #include <vector>
 
 #include "cursor.hpp"
+#include "step.hpp"
 #include "workflow.hpp"
 
 using namespace workflow;
@@ -30,7 +31,7 @@ void h(void) {}
 
 TEST_CASE("simple cursor", "[cursor]") {
   SECTION("Simple Workflow") {
-    const Workflow w1 = makeWorkflow({{"a", "Step a", h, {}}});
+    const Workflow w1 = makeWorkflow({{"a", "Step a", h, step::automatic, {}}});
     // Create a cursor from the workflow
     Cursor c1{w1};
     // None of the steps have completed yet
@@ -44,9 +45,10 @@ TEST_CASE("simple cursor", "[cursor]") {
   }
 
   SECTION("Steps with dependencies") {
-    const Workflow w2 = makeWorkflow({{"a", "Step a", h, {}},
-                                      {"b", "Step b", h, {"a"}},
-                                      {"c", "Step c", h, {"b"}}});
+    const Workflow w2 =
+        makeWorkflow({{"a", "Step a", h, step::automatic, {}},
+                      {"b", "Step b", h, step::automatic, {"a"}},
+                      {"c", "Step c", h, step::automatic, {"b"}}});
     Cursor c2{w2};
 
     REQUIRE(c2.completedSteps().size() == 0);
@@ -66,10 +68,11 @@ TEST_CASE("simple cursor", "[cursor]") {
   }
 
   SECTION("Parallel Tasks") {
-    const Workflow w3 = makeWorkflow({{"a", "Add Reagent 2", h, {}},
-                                      {"b", "Preheat Heater", h, {"a"}},
-                                      {"c", "Mix Reagents", h, {"a"}},
-                                      {"d", "Heat Sample", h, {"b", "c"}}});
+    const Workflow w3 =
+        makeWorkflow({{"a", "Add Reagent 2", h, step::automatic, {}},
+                      {"b", "Preheat Heater", h, step::automatic, {"a"}},
+                      {"c", "Mix Reagents", h, step::automatic, {"a"}},
+                      {"d", "Heat Sample", h, step::automatic, {"b", "c"}}});
     Cursor c3{w3};
 
     REQUIRE(c3.completedSteps().size() == 0);
@@ -93,7 +96,7 @@ TEST_CASE("simple cursor", "[cursor]") {
   }
 
   SECTION("Failed steps") {
-    const Workflow w4 = makeWorkflow({{"a", "Step A", h, {}}});
+    const Workflow w4 = makeWorkflow({{"a", "Step A", h, step::automatic, {}}});
     Cursor c4{w4};
 
     c4.failed("a");
@@ -102,7 +105,8 @@ TEST_CASE("simple cursor", "[cursor]") {
 
   SECTION("Exceptions") {
     const Workflow w5 =
-        makeWorkflow({{"a", "Step A", h, {}}, {"b", "Step B", h, {"a"}}});
+        makeWorkflow({{"a", "Step A", h, step::automatic, {}},
+                      {"b", "Step B", h, step::automatic, {"a"}}});
     Cursor c5{w5};
 
     // Cannot complete a step which is not in the workflow
