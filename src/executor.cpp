@@ -1,5 +1,8 @@
 #include <condition_variable>
 #include <functional>
+#include <future>
+#include <list>
+#include <map>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -120,6 +123,57 @@ void asyncStepExecutor(mutex &ioMutex, mutex &queueMutex,
 ExecutionResult
 asyncExecutor(Cursor &cur, function<bool(const step::Step &)> permissionRequest,
               function<void(Cursor &)> onUpdate) {
+
+  // It is necessary to keep a reference to a future to allow
+  // it to execute in a truly asynchronous manner
+  map<string, future<void>> runningSteps;
+
+  // Thread related setup
+  mutex ioMutex;
+  mutex queueMutex;
+  condition_variable queueCV;
+  list<pair<string, ExecutionResult>> queue;
+
+  vector<string> readySteps = cur.readySteps();
+
+  while (readySteps.size() > 0) {
+
+    // Asynchronously call the asyncStepExecutor on the step and add it to the
+    // map of running steps
+    for (auto id : readySteps) {
+      // Only put in steps which are not already running
+      if (runningSteps.contains(id) == false) {
+        runningSteps.insert(
+            {id, async(launch::async, asyncStepExecutor, ref(ioMutex),
+                       ref(queueMutex), ref(queueCV), ref(queue),
+                       ref(cur.flow[id]), permissionRequest)});
+      }
+    }
+
+    // Wait for messages to appear on the queue
+    std::unique_lock<std::mutex> queueLock(queueMutex);
+    queueCV.wait(queueLock);
+    // Mutex has now been acquired
+    while (queue.empty() == false) {
+      // Process each message on the queue
+      auto msg = queue.front();
+      queue.pop_front();
+      // Remove relevant future from runningSteps
+      runningSteps.erase(msg.first);
+      // Process the cursor
+      if (msg.second == success) {
+        cur.completed(msg.first);
+      } else if (msg.second == failure) {
+        cur.failed(msg.first);
+      }
+    }
+
+    // Call the on update function
+    onUpdate(cur);
+
+    // Update the vector of ready steps
+    readySteps = cur.readySteps();
+  }
 
   bool all_complete = cur.completedSteps().size() == cur.flow.size();
 
