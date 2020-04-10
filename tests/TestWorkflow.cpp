@@ -18,24 +18,24 @@ TEST_CASE("simple workflow", "[workflow]") {
 
   SECTION("Empty workflow") { REQUIRE(makeWorkflow({}).size() == 0); }
   SECTION("One step") {
-    Workflow w1 = makeWorkflow({{"a", "Step a", g, {}}});
+    Workflow w1 = makeWorkflow({{"a", "Step a", g, step::automatic, {}}});
     REQUIRE(w1.size() == 1);
     REQUIRE(w1["a"].id == "a");
   }
   SECTION("Linear steps") {
-    Workflow w2 = makeWorkflow({{"a", "Step a", g, {}},
-                                {"b", "Step b", g, {"a"}},
-                                {"c", "Step c", g, {"b"}}});
+    Workflow w2 = makeWorkflow({{"a", "Step a", g, step::automatic, {}},
+                                {"b", "Step b", g, step::automatic, {"a"}},
+                                {"c", "Step c", g, step::automatic, {"b"}}});
     REQUIRE(w2.size() == 3);
     REQUIRE(step::viewDependencies(w2["b"]) == vector<string>{"a"});
     REQUIRE(step::viewDependencies(w2["c"]) == vector<string>{"b"});
   }
   SECTION("Invalid Workflow") {
     // Steps not added in correct order
-    REQUIRE_THROWS(
-        makeWorkflow({{"a", "Step a", g, {"b"}}, {"b", "Step b", g, {}}}));
+    REQUIRE_THROWS(makeWorkflow({{"a", "Step a", g, step::automatic, {"b"}},
+                                 {"b", "Step b", g, step::automatic, {}}}));
     // Repeating ids
-    REQUIRE_THROWS(
-        makeWorkflow({{"a", "Step a", g, {}}, {"a", "Step b", g, {}}}));
+    REQUIRE_THROWS(makeWorkflow({{"a", "Step a", g, step::automatic, {}},
+                                 {"a", "Step b", g, step::automatic, {}}}));
   }
 }

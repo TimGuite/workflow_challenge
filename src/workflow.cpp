@@ -28,7 +28,7 @@ Workflow makeWorkflow(vector<StepDescription> workflowDescription) {
         dependencies.push_back(ref(flow[dep]));
       }
     }
-    flow.insert({s.id, {s.id, s.description, s.task, dependencies}});
+    flow.insert({s.id, {s.id, s.description, s.task, s.type, dependencies}});
   }
 
   return flow;
