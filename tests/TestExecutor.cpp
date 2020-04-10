@@ -24,8 +24,8 @@ void successfulTask(void) {}
 // Function which throws an exception while running
 void problematicTask(void) { throw "An error"; }
 
-bool successfulPermissionRequest() { return true; }
-bool unsuccessfulPermissionRequest() { return false; }
+bool successfulPermissionRequest(const Step &s) { return true; }
+bool unsuccessfulPermissionRequest(const Step &s) { return false; }
 
 // Empty on update function
 void onUpdate(Cursor &c) {}
@@ -92,9 +92,7 @@ TEST_CASE("blocking executor", "[executor]") {
     // We would expect this to be called on every update, i.e every time a
     // step is run
     int count = 0;
-    auto f = [&count](Cursor &c) mutable {
-      count = count + 1;
-    };
+    auto f = [&count](Cursor &c) mutable { count = count + 1; };
     const Workflow w5 =
         makeWorkflow({{"a", "Step a", successfulTask, automatic, {}},
                       {"b", "Step b", successfulTask, automatic, {"a"}},

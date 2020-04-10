@@ -9,7 +9,7 @@ namespace executor {
 
 enum ExecutionResult { success, failure };
 
-ExecutionResult blockingExecutor(cursor::Cursor &, std::function<bool()>,
+ExecutionResult blockingExecutor(cursor::Cursor &, std::function<bool(const step::Step &)>,
                                  std::function<void(cursor::Cursor &)>);
 
 } // namespace executor

@@ -13,9 +13,10 @@ using namespace std;
 
 namespace executor {
 
-ExecutionResult blockingExecutor(Cursor &cur,
-                                 function<bool()> permissionRequest,
-                                 function<void(Cursor &)> onUpdate) {
+ExecutionResult
+blockingExecutor(Cursor &cur,
+                 function<bool(const step::Step &)> permissionRequest,
+                 function<void(Cursor &)> onUpdate) {
   vector<string> readySteps = cur.readySteps();
 
   while (readySteps.size() > 0) {
@@ -26,7 +27,7 @@ ExecutionResult blockingExecutor(Cursor &cur,
         cur.completed(readySteps[0]);
       } else if (cur.flow[readySteps[0]].type == manual) {
         // Seek permission
-        if (permissionRequest()) {
+        if (permissionRequest(cur.flow[readySteps[0]])) {
           // Execute if given
           cur.flow[readySteps[0]].task();
           cur.completed(readySteps[0]);
