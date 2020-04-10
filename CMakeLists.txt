@@ -70,6 +70,9 @@ target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
 add_test(test1 mytest)
 
+add_executable(syncCli src/synchronousWorkflow.cpp)
+target_link_libraries(syncCli PUBLIC mylib)
+
 # Clang tidy as optional static analyzer
 option(Template_USE_CLANG_TIDY "Use clang tidy for static analysis" OFF)
 if (Template_USE_CLANG_TIDY)
