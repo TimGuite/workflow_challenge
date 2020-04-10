@@ -82,6 +82,11 @@ add_executable(syncCli  src/synchronousWorkflow.cpp
                         src/termcolor.hpp)
 target_link_libraries(syncCli PUBLIC mylib)
 
+add_executable(asyncCli  src/asyncWorkflow.cpp
+                        src/termcolor.hpp)
+target_link_libraries(asyncCli PUBLIC mylib)
+target_link_libraries(asyncCli PUBLIC Threads::Threads)
+
 # Clang tidy as optional static analyzer
 option(Template_USE_CLANG_TIDY "Use clang tidy for static analysis" OFF)
 if (Template_USE_CLANG_TIDY)
