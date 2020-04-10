@@ -118,4 +118,73 @@ TEST_CASE("Asynchronous Step Executor", "[executor]") {
       }
     }
   }
+
+  SECTION("Two manual successes") {
+    mutex ioM;
+    mutex queueM;
+    condition_variable queueCV;
+    list<pair<string, ExecutionResult>> queue;
+    Step s1{"a", "Step a", successfulTaskAsync, manual, {}};
+    Step s2{"b", "Step b", successfulTaskAsync, manual, {}};
+
+    auto f1 = async(launch::async, asyncStepExecutor, ref(ioM), ref(queueM),
+                    ref(queueCV), ref(queue), ref(s1),
+                    successfulPermissionRequestAsync);
+    auto f2 = async(launch::async, asyncStepExecutor, ref(ioM), ref(queueM),
+                    ref(queueCV), ref(queue), ref(s2),
+                    successfulPermissionRequestAsync);
+
+    // Check that a successful result came back on the queue
+    {
+      unique_lock lk(queueM);
+      // Wait twice
+      queueCV.wait(lk);
+      // Can't be guaranteed that both steps will run first
+      if (queue.size() == 1) {
+        queueCV.wait(lk);
+      }
+      // Establish the values are different
+      REQUIRE(queue.front().first != queue.back().first);
+      // Check the results
+      REQUIRE(queue.front().second == success);
+      REQUIRE(queue.back().second == success);
+    }
+  }
+
+  SECTION("One permission success, one permission failure") {
+    mutex ioM;
+    mutex queueM;
+    condition_variable queueCV;
+    list<pair<string, ExecutionResult>> queue;
+    Step s1{"a", "Step a", successfulTaskAsync, manual, {}};
+    Step s2{"b", "Step b", successfulTaskAsync, manual, {}};
+
+    auto f1 = async(launch::async, asyncStepExecutor, ref(ioM), ref(queueM),
+                    ref(queueCV), ref(queue), ref(s1),
+                    successfulPermissionRequestAsync);
+    auto f2 = async(launch::async, asyncStepExecutor, ref(ioM), ref(queueM),
+                    ref(queueCV), ref(queue), ref(s2),
+                    unsuccessfulPermissionRequestAsync);
+
+    // Check that a successful result came back on the queue
+    {
+      unique_lock lk(queueM);
+      // Wait twice
+      queueCV.wait(lk);
+      // Can't be guaranteed that both steps will run first
+      if (queue.size() == 1) {
+        queueCV.wait(lk);
+      }
+      // Establish the values are different
+      REQUIRE(queue.front().first != queue.back().first);
+      // Check the results
+     if (queue.front().first == "a") {
+        REQUIRE(queue.front().second == success);
+        REQUIRE(queue.back().second == failure);
+      } else {
+        REQUIRE(queue.back().second == success);
+        REQUIRE(queue.front().second == failure);
+      }
+    }
+  }
 }
