@@ -7,8 +7,8 @@ namespace executor {
 
 enum ExecutionResult { success, failure };
 
-ExecutionResult blockingExecutor(const cursor::Cursor &);
+ExecutionResult blockingExecutor(cursor::Cursor &);
 
-}
+} // namespace executor
 
 #endif
