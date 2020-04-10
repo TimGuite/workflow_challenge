@@ -86,4 +86,21 @@ TEST_CASE("blocking executor", "[executor]") {
         blockingExecutor(c4, unsuccessfulPermissionRequest, onUpdate);
     REQUIRE(r4 == failure);
   }
+
+  SECTION("onUpdate function runs correctly") {
+    // Create a lambda function which updates a variable in the local scope
+    // We would expect this to be called on every update, i.e every time a
+    // step is run
+    int count = 0;
+    auto f = [&count](Cursor &c) mutable {
+      count = count + 1;
+    };
+    const Workflow w5 =
+        makeWorkflow({{"a", "Step a", successfulTask, automatic, {}},
+                      {"b", "Step b", successfulTask, automatic, {"a"}},
+                      {"c", "Step c", successfulTask, manual, {"b"}}});
+    Cursor c5{w5};
+    blockingExecutor(c5, successfulPermissionRequest, f);
+    REQUIRE(count == 3);
+  }
 }

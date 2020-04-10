@@ -35,7 +35,6 @@ ExecutionResult blockingExecutor(Cursor &cur,
           cur.failed(readySteps[0]);
         }
       }
-
     }
     // Expect most functions to throw an exception with a message
     catch (char e) {
@@ -45,6 +44,9 @@ ExecutionResult blockingExecutor(Cursor &cur,
     catch (...) {
       cur.failed(readySteps[0]);
     }
+
+    // Call the on update function
+    onUpdate(cur);
 
     // Update the vector of ready steps
     readySteps = cur.readySteps();
