@@ -10,6 +10,7 @@ to provide permission for manual processes
 #include "cursor.hpp"
 #include "executor.hpp"
 #include "step.hpp"
+#include "termcolor.hpp"
 #include "workflow.hpp"
 
 using namespace cursor;
@@ -41,19 +42,19 @@ void onUpdate(cursor::Cursor &c) {
     cout << step.first << ": ";
     switch (step.second) {
     case waiting:
-      cout << "waiting";
+      cout << termcolor::white << "waiting";
       break;
     case ready:
-      cout << "ready";
+      cout << termcolor::on_yellow << "ready";
       break;
     case fail:
-      cout << "failed";
+      cout << termcolor::on_red << "failed";
       break;
     case complete:
-      cout << "complete";
+      cout << termcolor::on_green << "complete";
       break;
     }
-    cout << endl;
+    cout << termcolor::reset << endl;
   }
 }
 
@@ -75,9 +76,11 @@ int main() {
   auto res = blockingExecutor(c, cliSeekPermission, onUpdate);
 
   if (res == success) {
-    cout << "Execution completed successfully." << endl;
+    cout << termcolor::on_green << "Execution completed successfully."
+         << termcolor::reset << endl;
   } else {
-    cout << "Execution failed." << endl;
+    cout << termcolor::on_red << "Execution failed." << termcolor::reset
+         << endl;
   }
 
   return 0;
