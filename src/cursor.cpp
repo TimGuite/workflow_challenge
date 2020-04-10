@@ -84,4 +84,8 @@ void Cursor::updateState() {
   }
 }
 
+const std::map<string, StepState> &Cursor::viewState() const {
+  return workflowState;
+}
+
 } // namespace cursor
