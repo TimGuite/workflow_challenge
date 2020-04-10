@@ -6,6 +6,7 @@ to provide permission for manual processes
 #include <iostream>
 #include <locale>
 #include <string>
+#include <thread>
 
 #include "cursor.hpp"
 #include "step.hpp"
@@ -18,6 +19,7 @@ using namespace syncexecutor;
 using namespace step;
 using namespace workflow;
 using namespace std;
+using namespace std::chrono_literals;
 
 bool cliSeekPermission(const Step &s) {
   string result;
@@ -59,7 +61,7 @@ void onUpdate(cursor::Cursor &c) {
 }
 
 // Empty function implementation
-void f() {}
+void f() { std::this_thread::sleep_for(5s); }
 
 int main() {
 

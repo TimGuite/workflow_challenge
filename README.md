@@ -70,6 +70,12 @@ $ ctest --output-on-failure
 ./syncCli
 ```
 
+### Asynchronous Executor
+
+```bash
+./asyncCli
+```
+
 # Tools
 
 ### CMakeLists.txt

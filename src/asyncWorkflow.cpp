@@ -19,6 +19,7 @@ using namespace asyncexecutor;
 using namespace step;
 using namespace workflow;
 using namespace std;
+using namespace std::chrono_literals;
 
 bool cliSeekPermission(const Step &s) {
   string result;
