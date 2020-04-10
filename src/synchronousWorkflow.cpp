@@ -8,13 +8,13 @@ to provide permission for manual processes
 #include <string>
 
 #include "cursor.hpp"
-#include "executor.hpp"
 #include "step.hpp"
+#include "syncExecutor.hpp"
 #include "termcolor.hpp"
 #include "workflow.hpp"
 
 using namespace cursor;
-using namespace executor;
+using namespace syncexecutor;
 using namespace step;
 using namespace workflow;
 using namespace std;

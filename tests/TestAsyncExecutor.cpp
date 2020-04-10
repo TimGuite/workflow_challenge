@@ -8,11 +8,15 @@
 #include <string>
 #include <utility>
 
-#include "executor.hpp"
+#include "asyncExecutor.hpp"
+#include "cursor.hpp"
 #include "step.hpp"
+#include "workflow.hpp"
 
-using namespace executor;
+using namespace asyncexecutor;
+using namespace cursor;
 using namespace step;
+using namespace workflow;
 using namespace std;
 
 // Function which runs without problems
@@ -22,6 +26,9 @@ void problematicTaskAsync(void) { throw "An error"; }
 
 bool successfulPermissionRequestAsync(const Step &s) { return true; }
 bool unsuccessfulPermissionRequestAsync(const Step &s) { return false; }
+
+// Empty on update function
+void onUpdateAsync(Cursor &c) {}
 
 TEST_CASE("Asynchronous Step Executor", "[executor]") {
   SECTION("Execute a function successfully and see it on the queue") {
@@ -178,7 +185,7 @@ TEST_CASE("Asynchronous Step Executor", "[executor]") {
       // Establish the values are different
       REQUIRE(queue.front().first != queue.back().first);
       // Check the results
-     if (queue.front().first == "a") {
+      if (queue.front().first == "a") {
         REQUIRE(queue.front().second == success);
         REQUIRE(queue.back().second == failure);
       } else {
@@ -186,5 +193,79 @@ TEST_CASE("Asynchronous Step Executor", "[executor]") {
         REQUIRE(queue.front().second == failure);
       }
     }
+  }
+}
+
+// Same tests as above but for async executor
+TEST_CASE("async executor", "[executor]") {
+  SECTION("Simple workflow") {
+    const Workflow w1 =
+        makeWorkflow({{"a", "Step a", successfulTaskAsync, automatic, {}}});
+    // Create a cursor from the workflow
+    Cursor c1{w1};
+    ExecutionResult r1 =
+        asyncExecutor(c1, successfulPermissionRequestAsync, onUpdateAsync);
+    REQUIRE(r1 == success);
+  }
+
+  SECTION("Steps with dependencies") {
+    // Also has a manual step
+    const Workflow w2 =
+        makeWorkflow({{"a", "Step a", successfulTaskAsync, automatic, {}},
+                      {"b", "Step b", successfulTaskAsync, automatic, {"a"}},
+                      {"c", "Step c", successfulTaskAsync, manual, {"b"}}});
+    Cursor c2{w2};
+    ExecutionResult r2 =
+        asyncExecutor(c2, successfulPermissionRequestAsync, onUpdateAsync);
+    REQUIRE(r2 == success);
+  }
+
+  SECTION("Parallel Tasks") {
+    const Workflow w3 = makeWorkflow(
+        {{"a", "Add Reagent 2", successfulTaskAsync, automatic, {}},
+         {"b", "Preheat Heater", successfulTaskAsync, automatic, {"a"}},
+         {"c", "Mix Reagents", successfulTaskAsync, automatic, {"a"}},
+         {"d", "Heat Sample", successfulTaskAsync, automatic, {"b", "c"}}});
+    Cursor c3{w3};
+    ExecutionResult r3 =
+        asyncExecutor(c3, successfulPermissionRequestAsync, onUpdateAsync);
+    REQUIRE(r3 == success);
+  }
+
+  SECTION("Parallel Tasks with error") {
+    const Workflow w3 = makeWorkflow(
+        {{"a", "Add Reagent 2", successfulTaskAsync, automatic, {}},
+         {"b", "Preheat Heater", successfulTaskAsync, automatic, {"a"}},
+         {"c", "Mix Reagents", problematicTaskAsync, automatic, {"a"}},
+         {"d", "Heat Sample", successfulTaskAsync, automatic, {"b", "c"}}});
+    Cursor c3{w3};
+    ExecutionResult r3 =
+        asyncExecutor(c3, successfulPermissionRequestAsync, onUpdateAsync);
+    REQUIRE(r3 == failure);
+  }
+
+  SECTION("Permission not given") {
+    const Workflow w4 =
+        makeWorkflow({{"a", "Step a", successfulTaskAsync, manual, {}}});
+    // Create a cursor from the workflow
+    Cursor c4{w4};
+    ExecutionResult r4 =
+        asyncExecutor(c4, unsuccessfulPermissionRequestAsync, onUpdateAsync);
+    REQUIRE(r4 == failure);
+  }
+
+  SECTION("onUpdateAsync function runs correctly") {
+    // Create a lambda function which updates a variable in the local scope
+    // We would expect this to be called on every update, i.e every time a
+    // step is run
+    int count = 0;
+    auto f = [&count](Cursor &c) mutable { count = count + 1; };
+    const Workflow w5 =
+        makeWorkflow({{"a", "Step a", successfulTaskAsync, automatic, {}},
+                      {"b", "Step b", successfulTaskAsync, automatic, {"a"}},
+                      {"c", "Step c", successfulTaskAsync, manual, {"b"}}});
+    Cursor c5{w5};
+    asyncExecutor(c5, successfulPermissionRequestAsync, f);
+    REQUIRE(count == 3);
   }
 }

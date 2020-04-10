@@ -7,16 +7,12 @@
 #include "cursor.hpp"
 #include "step.hpp"
 
-#ifndef EXECUTOR_H_
-#define EXECUTOR_H_
+#ifndef ASYNCEXECUTOR_H_
+#define ASYNCEXECUTOR_H_
 
-namespace executor {
+namespace asyncexecutor {
 
 enum ExecutionResult { success, failure };
-
-ExecutionResult blockingExecutor(cursor::Cursor &,
-                                 std::function<bool(const step::Step &)>,
-                                 std::function<void(cursor::Cursor &)>);
 
 ExecutionResult asyncExecutor(cursor::Cursor &,
                               std::function<bool(const step::Step &)>,
@@ -26,6 +22,6 @@ void asyncStepExecutor(std::mutex &, std::mutex &, std::condition_variable &,
                        std::list<std::pair<std::string, ExecutionResult>> &,
                        step::Step &, std::function<bool(const step::Step &)>);
 
-} // namespace executor
+} // namespace asyncexecutor
 
 #endif

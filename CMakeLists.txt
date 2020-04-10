@@ -59,8 +59,10 @@ add_library(mylib src/step.cpp
                   src/workflow.hpp
                   src/cursor.hpp
                   src/cursor.cpp
-                  src/executor.hpp
-                  src/executor.cpp)
+                  src/syncExecutor.hpp
+                  src/syncExecutor.cpp
+                  src/asyncExecutor.hpp
+                  src/asyncExecutor.cpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
@@ -70,7 +72,7 @@ add_executable(mytest tests/TestMain.cpp
                       tests/TestWorkflow.cpp
                       tests/TestCursor.cpp
                       tests/TestExecutor.cpp
-                      tests/TestAsyncStepExecutor.cpp)
+                      tests/TestAsyncExecutor.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
 target_link_libraries(mytest PRIVATE Threads::Threads)
@@ -79,7 +81,6 @@ add_test(test1 mytest)
 add_executable(syncCli  src/synchronousWorkflow.cpp
                         src/termcolor.hpp)
 target_link_libraries(syncCli PUBLIC mylib)
-target_link_libraries(syncCli PUBLIC Threads::Threads)
 
 # Clang tidy as optional static analyzer
 option(Template_USE_CLANG_TIDY "Use clang tidy for static analysis" OFF)
