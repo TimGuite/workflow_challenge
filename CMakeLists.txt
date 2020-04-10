@@ -42,6 +42,10 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# Add lib pthreads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 # Set global compiler warnings
 if(MSVC)
     add_compile_options(/W3 /WX)
@@ -65,9 +69,11 @@ add_executable(mytest tests/TestMain.cpp
                       tests/TestStep.cpp
                       tests/TestWorkflow.cpp
                       tests/TestCursor.cpp
-                      tests/TestExecutor.cpp)
+                      tests/TestExecutor.cpp
+                      tests/TestAsyncStepExecutor.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
+target_link_libraries(mytest PRIVATE Threads::Threads)
 add_test(test1 mytest)
 
 add_executable(syncCli  src/synchronousWorkflow.cpp

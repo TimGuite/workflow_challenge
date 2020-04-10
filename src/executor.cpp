@@ -77,12 +77,13 @@ void asyncStepExecutor(mutex &ioMutex, mutex &queueMutex,
       s.task();
       res = success;
     } else if (s.type == manual) {
+      bool permission;
       // Mutex scope
       {
         // Acquire I/O mutex
         std::scoped_lock<std::mutex> ioLock(ioMutex);
         // Seek permission
-        bool permission = permissionRequest(s);
+        permission = permissionRequest(s);
         // I/O lock released
       }
       if (permission) {

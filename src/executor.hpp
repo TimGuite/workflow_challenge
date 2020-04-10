@@ -23,8 +23,8 @@ ExecutionResult asyncExecutor(cursor::Cursor &,
                               std::function<void(cursor::Cursor &)>);
 
 void asyncStepExecutor(std::mutex &, std::mutex &, std::condition_variable &,
-                       std::list<pair<std::string, ExecutionResult>> &,
-                       step::Step &, function<bool(const step::Step &)>)
+                       std::list<std::pair<std::string, ExecutionResult>> &,
+                       step::Step &, std::function<bool(const step::Step &)>);
 
 } // namespace executor
 
