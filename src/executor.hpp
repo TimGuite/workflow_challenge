@@ -1,3 +1,5 @@
+#include <functional>
+
 #include "cursor.hpp"
 
 #ifndef EXECUTOR_H_
@@ -7,7 +9,8 @@ namespace executor {
 
 enum ExecutionResult { success, failure };
 
-ExecutionResult blockingExecutor(cursor::Cursor &);
+ExecutionResult blockingExecutor(cursor::Cursor &, std::function<bool()>,
+                                 std::function<void(cursor::Cursor &)>);
 
 } // namespace executor
 

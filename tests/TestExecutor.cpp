@@ -24,45 +24,66 @@ void successfulTask(void) {}
 // Function which throws an exception while running
 void problematicTask(void) { throw "An error"; }
 
+bool successfulPermissionRequest() { return true; }
+bool unsuccessfulPermissionRequest() { return false; }
+
+// Empty on update function
+void onUpdate(Cursor &c) {}
+
 TEST_CASE("blocking executor", "[executor]") {
   SECTION("Simple workflow") {
     const Workflow w1 =
         makeWorkflow({{"a", "Step a", successfulTask, automatic, {}}});
     // Create a cursor from the workflow
     Cursor c1{w1};
-    ExecutionResult r1 = blockingExecutor(c1);
+    ExecutionResult r1 =
+        blockingExecutor(c1, successfulPermissionRequest, onUpdate);
     REQUIRE(r1 == success);
   }
 
   SECTION("Steps with dependencies") {
+    // Also has a manual step
     const Workflow w2 =
-        makeWorkflow({{"a", "Step a", successfulTask, step::automatic, {}},
-                      {"b", "Step b", successfulTask, step::automatic, {"a"}},
-                      {"c", "Step c", successfulTask, step::automatic, {"b"}}});
+        makeWorkflow({{"a", "Step a", successfulTask, automatic, {}},
+                      {"b", "Step b", successfulTask, automatic, {"a"}},
+                      {"c", "Step c", successfulTask, manual, {"b"}}});
     Cursor c2{w2};
-    ExecutionResult r2 = blockingExecutor(c2);
+    ExecutionResult r2 =
+        blockingExecutor(c2, successfulPermissionRequest, onUpdate);
     REQUIRE(r2 == success);
   }
 
   SECTION("Parallel Tasks") {
     const Workflow w3 = makeWorkflow(
-        {{"a", "Add Reagent 2", successfulTask, step::automatic, {}},
-         {"b", "Preheat Heater", successfulTask, step::automatic, {"a"}},
-         {"c", "Mix Reagents", successfulTask, step::automatic, {"a"}},
-         {"d", "Heat Sample", successfulTask, step::automatic, {"b", "c"}}});
+        {{"a", "Add Reagent 2", successfulTask, automatic, {}},
+         {"b", "Preheat Heater", successfulTask, automatic, {"a"}},
+         {"c", "Mix Reagents", successfulTask, automatic, {"a"}},
+         {"d", "Heat Sample", successfulTask, automatic, {"b", "c"}}});
     Cursor c3{w3};
-    ExecutionResult r3 = blockingExecutor(c3);
+    ExecutionResult r3 =
+        blockingExecutor(c3, successfulPermissionRequest, onUpdate);
     REQUIRE(r3 == success);
   }
 
   SECTION("Parallel Tasks with error") {
     const Workflow w3 = makeWorkflow(
-        {{"a", "Add Reagent 2", successfulTask, step::automatic, {}},
-         {"b", "Preheat Heater", successfulTask, step::automatic, {"a"}},
-         {"c", "Mix Reagents", problematicTask, step::automatic, {"a"}},
-         {"d", "Heat Sample", successfulTask, step::automatic, {"b", "c"}}});
+        {{"a", "Add Reagent 2", successfulTask, automatic, {}},
+         {"b", "Preheat Heater", successfulTask, automatic, {"a"}},
+         {"c", "Mix Reagents", problematicTask, automatic, {"a"}},
+         {"d", "Heat Sample", successfulTask, automatic, {"b", "c"}}});
     Cursor c3{w3};
-    ExecutionResult r3 = blockingExecutor(c3);
+    ExecutionResult r3 =
+        blockingExecutor(c3, successfulPermissionRequest, onUpdate);
     REQUIRE(r3 == failure);
+  }
+
+  SECTION("Permission not given") {
+    const Workflow w4 =
+        makeWorkflow({{"a", "Step a", successfulTask, manual, {}}});
+    // Create a cursor from the workflow
+    Cursor c4{w4};
+    ExecutionResult r4 =
+        blockingExecutor(c4, unsuccessfulPermissionRequest, onUpdate);
+    REQUIRE(r4 == failure);
   }
 }
