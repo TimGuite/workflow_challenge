@@ -36,6 +36,9 @@ public:
   std::vector<std::string> completedSteps();
   void completed(std::string);
   void failed(std::string);
+
+  // Return a constant reference to the map for read only access
+  const std::map<std::string, StepState>& viewState() const;
 };
 
 } // namespace cursor
