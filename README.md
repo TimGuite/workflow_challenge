@@ -62,6 +62,14 @@ $ make
 $ ctest --output-on-failure
 ```
 
+## Executables
+
+### Synchronous Executor
+
+```bash
+./syncCli
+```
+
 # Tools
 
 ### CMakeLists.txt
