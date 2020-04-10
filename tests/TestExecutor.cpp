@@ -10,14 +10,14 @@ expected to fail.
 #include "catch.hpp"
 
 #include "cursor.hpp"
-#include "executor.hpp"
 #include "step.hpp"
+#include "syncExecutor.hpp"
 #include "workflow.hpp"
 
 using namespace workflow;
 using namespace step;
 using namespace cursor;
-using namespace executor;
+using namespace syncexecutor;
 
 // Function which runs without problems
 void successfulTask(void) {}

@@ -8,14 +8,14 @@ to provide permission for manual processes
 #include <string>
 #include <thread>
 
+#include "asyncExecutor.hpp"
 #include "cursor.hpp"
 #include "step.hpp"
-#include "syncExecutor.hpp"
 #include "termcolor.hpp"
 #include "workflow.hpp"
 
 using namespace cursor;
-using namespace syncexecutor;
+using namespace asyncexecutor;
 using namespace step;
 using namespace workflow;
 using namespace std;
@@ -60,7 +60,7 @@ void onUpdate(cursor::Cursor &c) {
   }
 }
 
-// Empty function implementation
+// Empty function implementation with sleep
 void f() { std::this_thread::sleep_for(5s); }
 
 int main() {
@@ -75,7 +75,7 @@ int main() {
 
   Cursor c{w};
 
-  auto res = blockingExecutor(c, cliSeekPermission, onUpdate);
+  auto res = asyncExecutor(c, cliSeekPermission, onUpdate);
 
   if (res == success) {
     cout << termcolor::on_green << "Execution completed successfully."

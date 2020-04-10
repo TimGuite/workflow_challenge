@@ -42,6 +42,10 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# Add lib pthreads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 # Set global compiler warnings
 if(MSVC)
     add_compile_options(/W3 /WX)
@@ -55,8 +59,10 @@ add_library(mylib src/step.cpp
                   src/workflow.hpp
                   src/cursor.hpp
                   src/cursor.cpp
-                  src/executor.hpp
-                  src/executor.cpp)
+                  src/syncExecutor.hpp
+                  src/syncExecutor.cpp
+                  src/asyncExecutor.hpp
+                  src/asyncExecutor.cpp)
 target_include_directories(mylib PUBLIC src)
 
 enable_testing()
@@ -65,14 +71,21 @@ add_executable(mytest tests/TestMain.cpp
                       tests/TestStep.cpp
                       tests/TestWorkflow.cpp
                       tests/TestCursor.cpp
-                      tests/TestExecutor.cpp)
+                      tests/TestExecutor.cpp
+                      tests/TestAsyncExecutor.cpp)
 target_include_directories(mylib PRIVATE tests)
 target_link_libraries(mytest PRIVATE mylib)
+target_link_libraries(mytest PRIVATE Threads::Threads)
 add_test(test1 mytest)
 
 add_executable(syncCli  src/synchronousWorkflow.cpp
                         src/termcolor.hpp)
 target_link_libraries(syncCli PUBLIC mylib)
+
+add_executable(asyncCli  src/asyncWorkflow.cpp
+                        src/termcolor.hpp)
+target_link_libraries(asyncCli PUBLIC mylib)
+target_link_libraries(asyncCli PUBLIC Threads::Threads)
 
 # Clang tidy as optional static analyzer
 option(Template_USE_CLANG_TIDY "Use clang tidy for static analysis" OFF)

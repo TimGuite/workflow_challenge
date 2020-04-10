@@ -1,17 +1,18 @@
 #include <functional>
+#include <list>
 #include <string>
+#include <thread>
 #include <utility>
 #include <vector>
 
 #include "cursor.hpp"
-#include "executor.hpp"
-#include "step.hpp"
+#include "syncExecutor.hpp"
 
 using namespace cursor;
 using namespace step;
 using namespace std;
 
-namespace executor {
+namespace syncexecutor {
 
 ExecutionResult
 blockingExecutor(Cursor &cur,
@@ -59,4 +60,4 @@ blockingExecutor(Cursor &cur,
   return (all_complete ? success : failure);
 }
 
-} // namespace executor
+} // namespace syncexecutor
