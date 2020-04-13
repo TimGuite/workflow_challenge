@@ -257,7 +257,7 @@ TEST_CASE("async executor", "[executor]") {
   SECTION("onUpdateAsync function runs correctly") {
     // Create a lambda function which updates a variable in the local scope
     // We would expect this to be called on every update, i.e every time a
-    // step is run
+    // step is run and the initial call
     int count = 0;
     auto f = [&count](Cursor &c) mutable { count = count + 1; };
     const Workflow w5 =
@@ -266,6 +266,6 @@ TEST_CASE("async executor", "[executor]") {
                       {"c", "Step c", successfulTaskAsync, manual, {"b"}}});
     Cursor c5{w5};
     asyncExecutor(c5, successfulPermissionRequestAsync, f);
-    REQUIRE(count == 3);
+    REQUIRE(count == 4);
   }
 }

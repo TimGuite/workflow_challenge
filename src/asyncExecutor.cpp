@@ -88,7 +88,11 @@ asyncExecutor(Cursor &cur, function<bool(const step::Step &)> permissionRequest,
   condition_variable queueCV;
   list<ResultMessage> queue;
 
+  // Collect the steps which are ready at the start
   vector<string> readySteps = cur.readySteps();
+
+  // Call the update function once before execution begins
+  onUpdate(cur);
 
   while (readySteps.size() > 0) {
 
