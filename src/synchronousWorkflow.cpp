@@ -36,7 +36,7 @@ bool cliSeekPermission(const Step &s) {
   return (result == "y");
 }
 
-void onUpdate(cursor::Cursor &c) {
+void onUpdate(Cursor &c) {
   // Print out information about the state of the workflow
   cout << "================" << endl;
   auto state = c.viewState();

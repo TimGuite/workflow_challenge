@@ -18,7 +18,12 @@ ExecutionResult
 blockingExecutor(Cursor &cur,
                  function<bool(const step::Step &)> permissionRequest,
                  function<void(Cursor &)> onUpdate) {
+
+  // Collect the steps which are ready at the start
   vector<string> readySteps = cur.readySteps();
+  
+  // Call the update function once before execution begins
+  onUpdate(cur);
 
   while (readySteps.size() > 0) {
     try {

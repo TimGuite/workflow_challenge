@@ -34,12 +34,9 @@ I have tried to conform to common software engineering 'best practices', and to 
 
 # Getting Started
 
-- Install [CMake.17.0](https://cmake.org/download/) and a C++ compiler. E.g. for 
-  Ubuntu you can use the command-line and type:
-
-```bash
-$ sudo apt install build-essential cmake
-```
+- Install [CMake.17.0](https://cmake.org/download/) and a C++ compiler.
+CMake 3.17.0 is the latest version so may not be available directly from your system's packaging repository.
+See [here](#CMakeLists.txt) for further instructions on installing.
 
 - Make a build directory and configure the project. E.g. Assuming you are in a 
   directory containing the template source code:
@@ -62,6 +59,12 @@ $ make
 $ ctest --output-on-failure
 ```
 
+- Run the tests directly:
+
+```bash
+./mytest
+```
+
 ## Executables
 
 ### Synchronous Executor
@@ -71,6 +74,8 @@ $ ctest --output-on-failure
 ```
 
 ### Asynchronous Executor
+
+You will not in the asynchronous version that steps C and D should run truly in parallel, as expected.
 
 ```bash
 ./asyncCli
@@ -104,9 +109,11 @@ testing. This is fully defined in the `.travis.yml` file and includes:
 The results of the automated testing are reported on the [Travis CI project 
 page](https://travis-ci.org/OxfordRSE/template-project-cpp)
   
-### appveyor.yml
+### Code coverage
 
-### codecov
+There are some known issues currently using code coverage tools with CMake 3.17.0.
+It is expected that these will be amended in due course, a which point the methodology below will be put into place.
+At the moment, it is safe to ignore this section.
 
 Code coverage allow you to see how much of your code is actually covered by your 
 test suite. That is, which lines of code are actually run during the tests. 
