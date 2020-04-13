@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
-#include "cursor.hpp"
 #include "asyncExecutor.hpp"
+#include "cursor.hpp"
 #include "step.hpp"
 
 using namespace cursor;
@@ -23,8 +23,7 @@ namespace asyncexecutor {
 // Function to asynchronously execute steps and push the result on to the queue
 void asyncStepExecutor(mutex &ioMutex, mutex &queueMutex,
                        condition_variable &queueCV,
-                       list<pair<string, ExecutionResult>> &messageQueue,
-                       Step &s,
+                       list<ResultMessage> &messageQueue, Step &s,
                        function<bool(const Step &)> permissionRequest) {
 
   ExecutionResult res;
@@ -87,7 +86,7 @@ asyncExecutor(Cursor &cur, function<bool(const step::Step &)> permissionRequest,
   mutex ioMutex;
   mutex queueMutex;
   condition_variable queueCV;
-  list<pair<string, ExecutionResult>> queue;
+  list<ResultMessage> queue;
 
   vector<string> readySteps = cur.readySteps();
 
@@ -114,12 +113,12 @@ asyncExecutor(Cursor &cur, function<bool(const step::Step &)> permissionRequest,
       auto msg = queue.front();
       queue.pop_front();
       // Remove relevant future from runningSteps
-      runningSteps.erase(msg.first);
+      runningSteps.erase(msg.id);
       // Process the cursor
-      if (msg.second == success) {
-        cur.completed(msg.first);
-      } else if (msg.second == failure) {
-        cur.failed(msg.first);
+      if (msg.result == success) {
+        cur.completed(msg.id);
+      } else if (msg.result == failure) {
+        cur.failed(msg.id);
       }
     }
 
@@ -135,4 +134,4 @@ asyncExecutor(Cursor &cur, function<bool(const step::Step &)> permissionRequest,
   return (all_complete ? success : failure);
 }
 
-}
+} // namespace asyncexecutor
